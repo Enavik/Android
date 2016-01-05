@@ -14,14 +14,23 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnDragListener;
 import android.view.View.OnTouchListener;
+import android.view.ViewTreeObserver.OnScrollChangedListener;
+import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
 	static int cnt = 0;
 	static int dst = 0;
+	private String[] titles = {"Редактировать", "Удалить", "Пригласить друзей", "Рассказать друзьям"};
+	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +39,20 @@ public class MainActivity extends Activity {
 		Button btn = (Button) findViewById(R.id.btn1);
 		final LinearLayout ll = (LinearLayout) findViewById(R.id.frame2);
 		final TextView title = (TextView) findViewById(R.id.text_title);
+		
+		final ListView listView = (ListView) findViewById(R.id.list);
+		ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.text_view_item, titles);
+		listView.setAdapter(adapter);
+		
+//		final ImageView view = (ImageView) findViewById(R.id.v_image);
+//		view.setOnClickListener(new OnClickListener() {
+//			
+//			@Override
+//			public void onClick(View v) {
+//				ll.animate().translationY(ll.getHeight());
+//			}
+//		});
+		
 		ll.animate().setListener(new AnimatorListenerAdapter() {
 			
 			@Override
@@ -51,7 +74,7 @@ public class MainActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				if (ll.getVisibility() == View.GONE) {
-					title.setText(""+cnt++);
+//					title.setText(""+cnt++);
 					ll.animate().translationY(0);
 				} else
 					ll.animate().translationY(ll.getHeight());
@@ -79,8 +102,8 @@ public class MainActivity extends Activity {
 						if (y2 - y1 > 0) {
 							double vx = x2-x1;
 							double vy = y2-y1;
-							double nvx = x2-x1;
-							double nvy = (x1*x2+y1*y2)*y1 - y1;
+							double nvx = 0;
+							double nvy = x1*x2+y1*y2;
 							double cos = Math.acos((vx*nvx+vy*nvy)/(Math.sqrt(vx*vx+vy*vy)*Math.sqrt(nvx*nvx+nvy*nvy)));
 							if (cos > 0 && cos < delta) {
 								ll.animate().translationY(ll.getHeight());
