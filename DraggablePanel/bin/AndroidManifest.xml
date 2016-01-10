@@ -22,6 +22,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <service android:name=".MyService">
+            <intent-filter><action android:name="com.example.draggablepanel.MyService"></action>
+        	</intent-filter>
+        </service>
     </application>
 
 </manifest>

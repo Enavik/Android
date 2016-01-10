@@ -19,6 +19,38 @@
             android:text="Click"
             android:background="#FFFFFF"
             />
+        <Button 
+            android:id="@+id/start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Start"
+            android:background="#FFFFFF"
+            />
+        <Button 
+            android:id="@+id/stop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Stop"
+            android:background="#FFFFFF"
+            />
+        <Button 
+            android:id="@+id/bind"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Bind"
+            android:background="#FFFFFF"
+            />
+        <Button 
+            android:id="@+id/unbind"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Unbind"
+            android:background="#FFFFFF"
+            />
         
         <LinearLayout 
             android:layout_width="match_parent"

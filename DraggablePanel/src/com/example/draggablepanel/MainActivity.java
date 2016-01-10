@@ -4,7 +4,16 @@ import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
 import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.support.annotation.IdRes;
 import android.util.Log;
 import android.view.DragEvent;
 import android.view.Menu;
@@ -30,13 +39,74 @@ public class MainActivity extends Activity {
 	static int cnt = 0;
 	static int dst = 0;
 	private String[] titles = {"Редактировать", "Удалить", "Пригласить друзей", "Рассказать друзьям"};
-	
+	ServiceConnection sConn;
+	boolean bound;
+	Intent intent;
+	public static int STATUS = 1;
+	BroadcastReceiver br;
+	public static final String BROADCAST_ACTION = "com.example.draggablepanel";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		Button btn = (Button) findViewById(R.id.btn1);
+		
+		intent = new Intent("com.example.draggablepanel.MyService");
+		intent.putExtra("data", createPendingResult(STATUS, new Intent(), 0));
+		
+		sConn = new ServiceConnection() {
+		      public void onServiceConnected(ComponentName name, IBinder binder) {
+		        Log.i(MyService.tag, "MainActivity onServiceConnected");
+		        bound = true;
+		      }
+
+		      public void onServiceDisconnected(ComponentName name) {
+		        Log.i(MyService.tag, "MainActivity onServiceDisconnected");
+		        bound = false;
+		      }
+		};
+		final Button btn = (Button) findViewById(R.id.btn1);
+		
+		br = new BroadcastReceiver() {
+			
+			@Override
+			public void onReceive(Context context, Intent intent) {
+				Log.i(MyService.tag, "Got data " + intent.getStringExtra("data") + " from BroadcastReceiver");
+				btn.setText("Oyeee");
+			}
+		};
+		
+		IntentFilter filter = new IntentFilter(BROADCAST_ACTION);
+		registerReceiver(br, filter);
+		
+		Button start = (Button) findViewById(R.id.start);
+		Button stop = (Button) findViewById(R.id.stop);
+		Button bind = (Button) findViewById(R.id.bind);
+		Button unbind = (Button) findViewById(R.id.unbind);
+		start.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				startService(intent);
+			}
+		});
+		stop.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				stopService(intent);
+			}
+		});
+		bind.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				bindService(intent, sConn, BIND_AUTO_CREATE);
+			}
+		});
+		unbind.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				unbindService(sConn);
+			}
+		});
 		final LinearLayout ll = (LinearLayout) findViewById(R.id.frame2);
 		final TextView title = (TextView) findViewById(R.id.text_title);
 		
@@ -136,4 +206,38 @@ public class MainActivity extends Activity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (requestCode == STATUS) {
+			Log.i(MyService.tag, "Got data " + data.getStringExtra("data") + " from PendingIntent");
+		}
+	}
+
+	@Override
+	protected void onStop() {
+		super.onStop();
+		Log.i(MyService.tag, "onActivityStop");
+		unbindService(sConn);
+		unregisterReceiver(br);
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		Log.i(MyService.tag, "onActivityPause");
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		Log.i(MyService.tag, "onActivityDestroy");
+	}
+	
+	
+	
+	
+	
+	
 }
