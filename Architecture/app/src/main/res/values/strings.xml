@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Architecture</string>
+    <string name="act1">Loader</string>
+    <string name="act2">AsyncTask</string>
+</resources>
